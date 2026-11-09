@@ -3,6 +3,7 @@ from sqlalchemy import text
 
 from app.db.session import SessionLocal
 
+from app.modules.agent.router import router as agent_router
 from app.modules.anomaly.router import router as anomaly_router
 from app.modules.audit.router import router as audit_router
 from app.modules.auth.router import router as auth_router
@@ -15,7 +16,9 @@ from app.modules.network.router import router as network_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.reports.router import router as reports_router
 from app.modules.settings.router import router as settings_router
+from app.modules.system.router import router as system_router
 from app.modules.threat_intel.router import router as threat_intel_router
+from app.modules.users.router import router as users_router
 from app.modules.vulnerability.router import router as vulnerability_router
 from app.modules.websocket.router import router as websocket_router
 
@@ -34,6 +37,9 @@ api_router.include_router(reports_router, prefix="/reports", tags=["Reports"])
 api_router.include_router(notifications_router, prefix="/notifications", tags=["Notifications"])
 api_router.include_router(audit_router, prefix="/audit", tags=["Audit Logs"])
 api_router.include_router(settings_router, prefix="/settings", tags=["System Settings"])
+api_router.include_router(users_router, prefix="/users", tags=["User & Employee Management"])
+api_router.include_router(system_router, prefix="/system", tags=["System Telemetry & Simulation"])
+api_router.include_router(agent_router, prefix="/agent", tags=["Live Endpoint Agent"])
 api_router.include_router(websocket_router, prefix="/ws", tags=["Real Time"])
 
 

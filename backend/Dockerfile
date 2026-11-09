@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && groupadd -r cybershield && useradd -r -g cybershield -d /app cybershield
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --default-timeout=1000 --retries 10 -r requirements.txt
 
 COPY app ./app
 COPY alembic ./alembic

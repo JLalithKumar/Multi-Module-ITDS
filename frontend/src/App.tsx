@@ -9,6 +9,9 @@ import { Incidents } from "./pages/Incidents";
 import { GenericModule } from "./pages/GenericModule";
 import { ThreatIntel } from "./pages/ThreatIntel";
 import { Notifications } from "./pages/Notifications";
+import { Employees } from "./pages/Employees";
+import { SystemMonitor } from "./pages/SystemMonitor";
+import { EndpointAgent } from "./pages/EndpointAgent";
 import { Toasts } from "./components/Toasts";
 import { currentUser, hasPermission } from "./lib/api";
 
@@ -33,24 +36,30 @@ function Unauthorized() {
 
 export default function App() {
   return (
-    <><Toasts /><Routes>
-      <Route path="/login" element={<Login />} />
-      <Route element={<Protected />}>
-        <Route path="/" element={<RequirePermission permission="dashboard:read"><Dashboard /></RequirePermission>} />
-        <Route path="/logs" element={<RequirePermission permission="logs:read"><Logs /></RequirePermission>} />
-        <Route path="/detection" element={<RequirePermission permission="alerts:read"><Detection /></RequirePermission>} />
-        <Route path="/incidents" element={<RequirePermission permission="incidents:read"><Incidents /></RequirePermission>} />
-        <Route path="/intel" element={<RequirePermission permission="threat_intel:read"><ThreatIntel /></RequirePermission>} />
-        <Route path="/anomaly" element={<RequirePermission permission="alerts:read"><GenericModule title="Anomaly Detection" endpoint="/anomaly" /></RequirePermission>} />
-        <Route path="/network" element={<RequirePermission permission="dashboard:read"><GenericModule title="Network Monitoring" endpoint="/network" /></RequirePermission>} />
-        <Route path="/malware" element={<RequirePermission permission="malware:analyze"><GenericModule title="Malware Analysis" endpoint="/malware" /></RequirePermission>} />
-        <Route path="/vulnerabilities" element={<RequirePermission permission="vulnerability:scan"><GenericModule title="Vulnerability Scanner" endpoint="/vulnerabilities" /></RequirePermission>} />
-        <Route path="/reports" element={<RequirePermission permission="reports:read"><GenericModule title="Reports" endpoint="/reports" /></RequirePermission>} />
-        <Route path="/notifications" element={<RequirePermission permission="dashboard:read"><Notifications /></RequirePermission>} />
-        <Route path="/audit" element={<RequirePermission permission="audit:read"><GenericModule title="Audit Logs" endpoint="/audit" /></RequirePermission>} />
-        <Route path="/settings" element={<RequirePermission permission="settings:read"><GenericModule title="System Settings" endpoint="/settings" /></RequirePermission>} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-      </Route>
-    </Routes></>
+    <>
+      <Toasts />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route element={<Protected />}>
+          <Route path="/" element={<RequirePermission permission="dashboard:read"><Dashboard /></RequirePermission>} />
+          <Route path="/agent" element={<RequirePermission permission="dashboard:read"><EndpointAgent /></RequirePermission>} />
+          <Route path="/logs" element={<RequirePermission permission="logs:read"><Logs /></RequirePermission>} />
+          <Route path="/detection" element={<RequirePermission permission="alerts:read"><Detection /></RequirePermission>} />
+          <Route path="/incidents" element={<RequirePermission permission="incidents:read"><Incidents /></RequirePermission>} />
+          <Route path="/intel" element={<RequirePermission permission="threat_intel:read"><ThreatIntel /></RequirePermission>} />
+          <Route path="/anomaly" element={<RequirePermission permission="alerts:read"><GenericModule title="Anomaly Detection" endpoint="/anomaly" /></RequirePermission>} />
+          <Route path="/network" element={<RequirePermission permission="dashboard:read"><GenericModule title="Network Monitoring" endpoint="/network" /></RequirePermission>} />
+          <Route path="/malware" element={<RequirePermission permission="malware:analyze"><GenericModule title="Malware Analysis" endpoint="/malware" /></RequirePermission>} />
+          <Route path="/vulnerabilities" element={<RequirePermission permission="vulnerability:scan"><GenericModule title="Vulnerability Scanner" endpoint="/vulnerabilities" /></RequirePermission>} />
+          <Route path="/reports" element={<RequirePermission permission="reports:read"><GenericModule title="Reports" endpoint="/reports" /></RequirePermission>} />
+          <Route path="/notifications" element={<RequirePermission permission="dashboard:read"><Notifications /></RequirePermission>} />
+          <Route path="/audit" element={<RequirePermission permission="audit:read"><GenericModule title="Audit Logs" endpoint="/audit" /></RequirePermission>} />
+          <Route path="/employees" element={<RequirePermission permission="users:read"><Employees /></RequirePermission>} />
+          <Route path="/system-monitor" element={<RequirePermission permission="dashboard:read"><SystemMonitor /></RequirePermission>} />
+          <Route path="/settings" element={<RequirePermission permission="settings:read"><GenericModule title="System Settings" endpoint="/settings" /></RequirePermission>} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+        </Route>
+      </Routes>
+    </>
   );
 }

@@ -40,8 +40,21 @@ def create_log(payload: LogCreate, user: User = Depends(require_permissions("log
     db.add(AuditLog(actor=user.email, action="logs:create", entity="logs", metadata_json={"source": payload.source}))
     for alert in analyze_text(payload.message, payload.source)["alerts"]:
         from app.db.models import Alert
+        from app.services.alert_dispatcher import dispatch_critical_threat_alert
 
         db.add(Alert(**alert, status="open", tactic="Detection", technique=alert["title"], organization_id=user.organization_id))
+        if alert.get("severity") in ("critical", "high"):
+            try:
+                dispatch_critical_threat_alert(
+                    title=alert.get("title", "Critical Log Threat"),
+                    details=alert.get("description", payload.message),
+                    hostname=payload.source,
+                    process_name="LogIngestionSensor",
+                    severity=alert.get("severity", "critical"),
+                    destination=payload.source,
+                )
+            except Exception:
+                pass
     db.commit()
     db.refresh(log)
     return log

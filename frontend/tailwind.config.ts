@@ -5,22 +5,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        abyss: "#071018",
-        panel: "rgba(13, 25, 38, 0.78)",
-        line: "rgba(140, 164, 190, 0.18)",
-        cyanx: "#35d3ff",
-        mintx: "#3df2b7",
-        amberx: "#f4b860",
-        dangerx: "#ff526d"
+        abyss: "#0B0F17",
+        panel: "#111827",
+        line: "#1E293B",
+        cyanx: "#3B82F6",    // Executive Royal Cobalt Blue (primary)
+        mintx: "#10B981",    // Crisp Emerald
+        amberx: "#F59E0B",   // Refined Warning Amber
+        dangerx: "#EF4444",  // Crisp Emergency Red
       },
       boxShadow: {
-        glow: "0 0 45px rgba(53, 211, 255, 0.16)",
+        glow: "0 0 35px rgba(59, 130, 246, 0.12)",
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui"],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
       },
     },
   },
   plugins: [],
 } satisfies Config;
-

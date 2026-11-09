@@ -50,6 +50,21 @@ def analyze(payload: DetectionRequest, db: Session = Depends(get_db), user: User
         db.add(record)
         db.flush()
         db.add(Notification(channel="browser", title=record.title, message=record.description, severity=record.severity, organization_id=user.organization_id, recipient_user_id=user.id, required_permission="alerts:read", related_entity="alert", related_id=record.id))
+
+        # Only generate emergency SMS/Email alert when the threat is high or critical severity
+        if record.severity and record.severity.lower() in ("critical", "high"):
+            try:
+                from app.services.alert_dispatcher import dispatch_critical_threat_alert
+                dispatch_critical_threat_alert(
+                    title=record.title,
+                    details=record.description,
+                    hostname="Detection Console",
+                    process_name="Threat Detection Engine",
+                    severity=record.severity,
+                    destination=payload.source,
+                )
+            except Exception:
+                pass
     db.commit()
     return DetectionResult(**result)
 

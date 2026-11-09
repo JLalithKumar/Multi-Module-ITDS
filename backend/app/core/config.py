@@ -38,6 +38,12 @@ class Settings(BaseSettings):
     VIRUSTOTAL_API_KEY: str = ""
     ABUSEIPDB_API_KEY: str = ""
     OTX_API_KEY: str = ""
+    TWILIO_ACCOUNT_SID: str = ""
+    TWILIO_AUTH_TOKEN: str = ""
+    TWILIO_FROM_PHONE: str = ""
+    FAST2SMS_API_KEY: str = ""
+    ALERT_RECIPIENT_PHONE: str = "+917806932929"
+    SMS_PROVIDER: str = "twilio"
 
     @cached_property
     def cors_origins(self) -> list[str]:

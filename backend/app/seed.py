@@ -80,21 +80,30 @@ def seed_database() -> None:
                     legacy_user.force_password_change = True
 
         if settings.ADMIN_BOOTSTRAP_EMAIL and settings.ADMIN_BOOTSTRAP_PASSWORD:
-            existing_admin = db.query(User).filter(User.role_id == admin_role.id).first()
+            validate_password_strength(settings.ADMIN_BOOTSTRAP_PASSWORD)
             bootstrap_user = db.query(User).filter(User.email == settings.ADMIN_BOOTSTRAP_EMAIL).first()
-            if not existing_admin and not bootstrap_user:
-                validate_password_strength(settings.ADMIN_BOOTSTRAP_PASSWORD)
+            if not bootstrap_user:
                 db.add(
                     User(
                         email=settings.ADMIN_BOOTSTRAP_EMAIL,
-                        full_name="Bootstrap Administrator",
+                        full_name="CyberShield Administrator",
                         password_hash=hash_password(settings.ADMIN_BOOTSTRAP_PASSWORD),
                         role_id=admin_role.id,
                         is_verified=True,
-                        force_password_change=True,
+                        is_active=True,
+                        mfa_enabled=False,
+                        force_password_change=False,
                         organization_id=default_org.id,
                     )
                 )
+            else:
+                bootstrap_user.is_active = True
+                bootstrap_user.is_verified = True
+                bootstrap_user.force_password_change = False
+                bootstrap_user.password_hash = hash_password(settings.ADMIN_BOOTSTRAP_PASSWORD)
+                bootstrap_user.role_id = admin_role.id
+                bootstrap_user.locked_until = None
+                bootstrap_user.failed_login_count = 0
 
         if settings.LOAD_DEMO_DATA and db.query(SecurityLog).count() == 0:
             db.add_all(

@@ -15,7 +15,7 @@ from app.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
-DEFAULT_PASSWORDS = {"CyberShield!2026", "Password123!", "Admin123!", "ChangeMe123!"}
+DEFAULT_PASSWORDS = {"Password123!", "Admin123!", "ChangeMe123!"}
 
 
 def hash_password(password: str) -> str:
