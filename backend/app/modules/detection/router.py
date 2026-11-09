@@ -1,3 +1,4 @@
+import re
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -5,6 +6,7 @@ from app.core.deps import require_permissions
 from app.db.models import Alert, Detection, DetectionSuppression, Notification, User
 from app.db.session import get_db
 from app.schemas.modules import DetectionRequest, DetectionResult, RuleCreate, SuppressionCreate
+from app.services.alert_dispatcher import dispatch_critical_threat_alert
 from app.services.security_detection import SIGNATURES, analyze_text
 
 router = APIRouter(dependencies=[Depends(require_permissions("alerts:read"))])
@@ -39,8 +41,6 @@ def analyze(payload: DetectionRequest, db: Session = Depends(get_db), user: User
     }
     custom_rules = db.query(Detection).filter(Detection.enabled.is_(True)).all()
     for rule in custom_rules:
-        import re
-
         if re.search(rule.pattern, payload.text):
             result["alerts"].append({"title": rule.name, "severity": rule.severity, "source": payload.source, "confidence": 0.72, "description": f"Custom rule matched: {rule.category}"})
     result["alerts"] = [alert for alert in result["alerts"] if alert["title"] not in suppressed]
@@ -54,7 +54,6 @@ def analyze(payload: DetectionRequest, db: Session = Depends(get_db), user: User
         # Only generate emergency SMS/Email alert when the threat is high or critical severity
         if record.severity and record.severity.lower() in ("critical", "high"):
             try:
-                from app.services.alert_dispatcher import dispatch_critical_threat_alert
                 dispatch_critical_threat_alert(
                     title=record.title,
                     details=record.description,

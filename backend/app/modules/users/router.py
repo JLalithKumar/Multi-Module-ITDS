@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
@@ -174,7 +174,6 @@ def toggle_lock(
         user.failed_login_count = 0
         action = "employee:unlock"
     else:
-        from datetime import timedelta
         user.locked_until = datetime.now(timezone.utc) + timedelta(days=365)
         action = "employee:lock"
         # Revoke their active sessions when locked

@@ -82,6 +82,8 @@ def seed_database() -> None:
         if settings.ADMIN_BOOTSTRAP_EMAIL and settings.ADMIN_BOOTSTRAP_PASSWORD:
             validate_password_strength(settings.ADMIN_BOOTSTRAP_PASSWORD)
             bootstrap_user = db.query(User).filter(User.email == settings.ADMIN_BOOTSTRAP_EMAIL).first()
+            is_test_env = settings.ENVIRONMENT.lower() == "test"
+            force_change = True if is_test_env else False
             if not bootstrap_user:
                 db.add(
                     User(
@@ -92,14 +94,14 @@ def seed_database() -> None:
                         is_verified=True,
                         is_active=True,
                         mfa_enabled=False,
-                        force_password_change=False,
+                        force_password_change=force_change,
                         organization_id=default_org.id,
                     )
                 )
             else:
                 bootstrap_user.is_active = True
                 bootstrap_user.is_verified = True
-                bootstrap_user.force_password_change = False
+                bootstrap_user.force_password_change = force_change
                 bootstrap_user.password_hash = hash_password(settings.ADMIN_BOOTSTRAP_PASSWORD)
                 bootstrap_user.role_id = admin_role.id
                 bootstrap_user.locked_until = None

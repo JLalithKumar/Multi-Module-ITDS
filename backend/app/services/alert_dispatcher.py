@@ -4,8 +4,9 @@ import json
 import logging
 import smtplib
 from email.message import EmailMessage
-import urllib.request
+import urllib.error
 import urllib.parse
+import urllib.request
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,7 @@ def update_alert_config(updates: dict) -> dict:
             ALERT_CONFIG[k] = v
     return {**ALERT_CONFIG}
 
-def send_alert_email(subject: str, body: str, recipient: str = None) -> tuple[bool, str]:
+def send_alert_email(subject: str, body: str, recipient: str | None = None) -> tuple[bool, str]:
     to_email = recipient or ALERT_CONFIG["registered_email"]
     if not to_email:
         return False, "No recipient email registered"
@@ -70,7 +71,7 @@ def send_alert_email(subject: str, body: str, recipient: str = None) -> tuple[bo
         logger.error(f"Failed to send email to {to_email}: {exc}")
         return False, f"SMTP delivery failed: {str(exc)}"
 
-def send_alert_sms(message_text: str, phone: str = None) -> tuple[bool, str]:
+def send_alert_sms(message_text: str, phone: str | None = None) -> tuple[bool, str]:
     to_phone = phone or ALERT_CONFIG["registered_phone"]
     if not to_phone:
         return False, "No recipient phone number registered"

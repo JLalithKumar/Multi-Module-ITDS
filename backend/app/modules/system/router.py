@@ -1,4 +1,3 @@
-import os
 import psutil
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -16,7 +15,6 @@ from app.db.models import (
     User,
 )
 from app.db.session import get_db
-from app.services.security_detection import analyze_text
 
 router = APIRouter()
 

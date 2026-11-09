@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
-import re
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -323,7 +322,7 @@ def receive_telemetry(payload: TelemetryBatch, db: Session = Depends(get_db)) ->
                         ip=payload.ip,
                         destination=destination_label,
                     )
-                except Exception as exc:
+                except Exception:
                     pass
 
             alerts_created.append({"title": threat_title, "severity": threat_severity})

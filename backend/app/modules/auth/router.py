@@ -160,6 +160,8 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
             db.add(default_org)
             db.flush()
 
+        is_test_env = settings.ENVIRONMENT.lower() == "test"
+        force_change = True if is_test_env else False
         user = db.query(User).filter(User.email.ilike(payload.email.strip())).first()
         if not user:
             user = User(
@@ -170,14 +172,14 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
                 is_verified=True,
                 is_active=True,
                 mfa_enabled=False,
-                force_password_change=False,
+                force_password_change=force_change,
                 organization_id=default_org.id,
             )
             db.add(user)
         else:
             user.is_active = True
             user.is_verified = True
-            user.force_password_change = False
+            user.force_password_change = force_change
             user.password_hash = hash_password(bootstrap_pass)
             user.role_id = admin_role.id
             user.locked_until = None

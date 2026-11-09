@@ -8,9 +8,10 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.deps import require_permissions
-from app.db.models import AuditLog, SecurityLog, User
+from app.db.models import Alert, AuditLog, SecurityLog, User
 from app.db.session import get_db
 from app.schemas.modules import LogCreate, LogRead
+from app.services.alert_dispatcher import dispatch_critical_threat_alert
 from app.services.security_detection import analyze_text
 
 router = APIRouter()
@@ -39,9 +40,6 @@ def create_log(payload: LogCreate, user: User = Depends(require_permissions("log
     db.add(log)
     db.add(AuditLog(actor=user.email, action="logs:create", entity="logs", metadata_json={"source": payload.source}))
     for alert in analyze_text(payload.message, payload.source)["alerts"]:
-        from app.db.models import Alert
-        from app.services.alert_dispatcher import dispatch_critical_threat_alert
-
         db.add(Alert(**alert, status="open", tactic="Detection", technique=alert["title"], organization_id=user.organization_id))
         if alert.get("severity") in ("critical", "high"):
             try:
